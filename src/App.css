@@ -1,38 +1,269 @@
-.App {
+/* src/App.css
+   Clean & attractive UI for Dynamic Diagram Flow
+   - Responsive sidebar + diagram area
+   - Styled React Flow nodes, handles, edges, minimap, controls
+   - Easy-to-read layout and accessible contrast
+*/
+
+/* ---------- Root variables (palette & spacing) ---------- */
+:root{
+  --bg-dark: #071029;        /* main background */
+  --bg-mid:  #0f2b45;        /* gradient end */
+  --panel:   #0b2236;        /* sidebar panel */
+  --card:    rgba(255,255,255,0.04);
+  --muted:   rgba(255,255,255,0.84);
+  --accent:  #4D96FF;
+  --accent-2:#6BCB77;
+  --glass:   rgba(255,255,255,0.02);
+
+  --sidebar-w: 320px;
+  --radius: 12px;
+  --gap: 12px;
+}
+
+/* ---------- Global layout ---------- */
+* { box-sizing: border-box; }
+html, body, #root { height: 100%; margin: 0; font-family: Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial; background: linear-gradient(180deg, var(--bg-dark), var(--bg-mid)); color: var(--muted); -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing: grayscale; }
+
+/* App container */
+.app-root {
+  display: flex;
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden;
+}
+
+/* ---------- Sidebar ---------- */
+.sidebar {
+  width: var(--sidebar-w);
+  min-width: 260px;
+  max-width: 420px;
+  padding: 18px;
+  border-right: 1px solid rgba(255,255,255,0.03);
+  background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+  overflow-y: auto;
+}
+
+/* Sidebar headings */
+.sidebar h3 {
+  margin: 0 0 12px 0;
+  font-size: 20px;
+  color: white;
+  letter-spacing: 0.2px;
+}
+
+/* Card style (forms, lists) */
+.card {
+  background: var(--card);
+  border-radius: var(--radius);
+  padding: 12px;
+  margin-bottom: var(--gap);
+  border: 1px solid rgba(255,255,255,0.03);
+  box-shadow: 0 6px 18px rgba(2,6,23,0.45);
+}
+
+/* Labels and inputs */
+.card label {
+  display:block;
+  font-size:12px;
+  color: rgba(255,255,255,0.9);
+  margin-bottom:6px;
+}
+.card input[type="text"],
+.card input[type="number"],
+.card select,
+.card textarea {
+  width:100%;
+  padding:8px 10px;
+  border-radius: 8px;
+  border: 1px solid rgba(255,255,255,0.06);
+  background: rgba(0,0,0,0.22);
+  color: var(--muted);
+  font-size: 13px;
+  outline: none;
+}
+.card input:focus, .card select:focus, .card textarea:focus {
+  border-color: rgba(77,150,255,0.22);
+  box-shadow: 0 6px 18px rgba(13,50,120,0.12);
+}
+
+/* Buttons */
+.btn {
+  display:inline-block;
+  padding:8px 12px;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+  background: linear-gradient(90deg, var(--accent), var(--accent-2));
+  color: #061022;
+  transition: transform .12s ease, box-shadow .12s ease;
+}
+.btn:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(13,50,120,0.22); }
+
+/* List items (nodes/edges list) */
+.list { list-style:none; margin:0; padding:0; }
+.list li {
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  padding:10px;
+  margin-bottom:8px;
+  border-radius:8px;
+  background: rgba(255,255,255,0.015);
+  border: 1px solid rgba(255,255,255,0.02);
+}
+.list li strong { color: white; font-size:13px; }
+
+/* small action buttons inside lists */
+.action {
+  padding:6px 8px;
+  border-radius:8px;
+  border:none;
+  background: rgba(255,255,255,0.03);
+  color: var(--muted);
+  cursor:pointer;
+  font-size:13px;
+}
+.action:hover { background: rgba(255,255,255,0.05); }
+
+/* quick reset link */
+.quick-reset {
+  display:block;
+  width:100%;
+  text-align:center;
+  padding:8px;
+  border-radius:10px;
+  background: transparent;
+  color: var(--muted);
+  border: 1px dashed rgba(255,255,255,0.03);
+  cursor: pointer;
+}
+
+/* ---------- Diagram area ---------- */
+.diagram-area {
+  flex: 1;
+  height: 100%;
+  position: relative;
+  display: block;
+  padding: 10px; /* small padding to show controls */
+}
+
+/* Ensure React Flow canvas fills available space */
+.react-flow {
+  height: calc(100vh - 20px) !important;
+  width: calc(100% - 20px) !important;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+/* ---------- React Flow node styles ---------- */
+/* Default node card */
+.react-flow__node-default {
+  position: relative;
+  background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+  border: 1px solid rgba(255,255,255,0.08);
+  padding: 10px 14px;
+  border-radius: 10px;
+  min-width: 120px;
+  box-shadow: 0 8px 24px rgba(2,6,23,0.55);
+  color: white;
+  font-weight: 600;
   text-align: center;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+/* small colored accent bar on left of node */
+.react-flow__node-default::before {
+  content: '';
+  position: absolute;
+  left: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 6px;
+  height: 46%;
+  border-radius: 4px;
+  background: linear-gradient(180deg, var(--accent), var(--accent-2));
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+/* small label inside node */
+.react-flow__node-default > div, .react-flow__node-default .react-flow__node-label {
+  color: #fff;
+  font-size: 14px;
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+/* selected node */
+.react-flow__node-default.react-flow__node-selected {
+  transform: scale(1.03);
+  border-color: rgba(255,255,255,0.22);
+  box-shadow: 0 12px 34px rgba(2,6,23,0.75);
 }
 
-.App-link {
-  color: #61dafb;
+/* ---------- Handles (connect points) ---------- */
+.react-flow__handle {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: 2px solid rgba(255,255,255,0.12);
+  background: linear-gradient(180deg, #FFD93D, #FF6B6B);
+  box-shadow: 0 6px 14px rgba(2,6,23,0.45);
+}
+.react-flow__handle:hover { transform: scale(1.15); }
+
+/* ---------- Edges & arrows ---------- */
+.react-flow__edge-path {
+  stroke: rgba(255,255,255,0.92);
+  stroke-width: 2.5px;
+  filter: drop-shadow(0 6px 12px rgba(2,6,23,0.5));
+}
+.react-flow__arrowhead-path {
+  fill: rgba(255,255,255,0.95);
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+/* edge label */
+.react-flow__edge-text {
+  color: rgba(255,255,255,0.95);
+  font-weight: 600;
 }
+
+/* ---------- MiniMap ---------- */
+.react-flow__minimap {
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid rgba(255,255,255,0.04);
+  background: rgba(0,0,0,0.22);
+}
+.react-flow__minimap .react-flow__node {
+  stroke: rgba(255,255,255,0.1);
+  fill: rgba(77,150,255,0.18);
+}
+
+/* ---------- Controls ---------- */
+.react-flow__controls {
+  background: rgba(0,0,0,0.28);
+  border-radius: 10px;
+  padding: 6px;
+  box-shadow: 0 8px 20px rgba(2,6,23,0.45);
+}
+.react-flow__controls button {
+  background: transparent;
+  border: none;
+  color: #fff;
+}
+
+/* Attribution */
+.react-flow__attribution {
+  color: rgba(255,255,255,0.45) !important;
+}
+
+/* ---------- Responsive adjustments ---------- */
+@media (max-width: 900px) {
+  .sidebar { width: 270px; padding: 14px; }
+  .react-flow { height: calc(100vh - 12px) !important; width: calc(100% - 12px) !important; }
+  .react-flow__node-default { min-width: 100px; padding: 8px 10px; font-size: 13px; }
+}
+
+/* ---------- Utility small helpers ---------- */
+.hidden { display: none !important; }
+.center { display:flex; justify-content:center; align-items:center; }
+
